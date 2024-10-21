@@ -2,6 +2,7 @@ package com.example.userAuthentication.Service;
 
 import com.example.userAuthentication.Model.User;
 import com.example.userAuthentication.Repository.UserRepository;
+import com.example.userAuthentication.Security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,8 +34,8 @@ public class UserService implements UserDetailsService {
         // Log informasi user untuk debugging
         System.out.println("User found: " + user.getUsername() + " with role: " + user.getRole());
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                new ArrayList<>());
+        // panggil CustomUserDetails disini
+        return new CustomUserDetails(user);
     }
 
 

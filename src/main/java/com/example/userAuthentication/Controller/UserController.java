@@ -4,13 +4,17 @@ package com.example.userAuthentication.Controller;
 import com.example.userAuthentication.Model.AuthRequest;
 import com.example.userAuthentication.Model.AuthResponse;
 import com.example.userAuthentication.Model.User;
+import com.example.userAuthentication.Security.CustomUserDetails;
 import com.example.userAuthentication.Security.JWTUtil;
 import com.example.userAuthentication.Service.UserService;
+import com.example.userAuthentication.dto.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -95,6 +99,22 @@ public class UserController {
 
         final String jwtToken = jwtUtil.generateToken(authRequest.getUsername());
         return ResponseEntity.ok(new AuthResponse(jwtToken));
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+
+        // Mapping ke DTO
+        UserResponse userResponse = new UserResponse(
+                user.getUserId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(userResponse);
     }
 
 }
